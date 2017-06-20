@@ -52,6 +52,8 @@ func httpOut(w http.ResponseWriter, message string, err error) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	w.Header().Add("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Content-Type", "application/json")
 	fmt.Fprintf(w, message)
 }
 
