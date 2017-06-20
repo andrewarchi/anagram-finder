@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/rs/cors"
 )
 
 var create = func(addr string, handler http.Handler) listener {
@@ -37,7 +38,8 @@ func createServer(addr string) (listener, error) {
 	router := httprouter.New()
 	router.GET("/anagrams/:letters", anagramFinder(anagrams))
 	router.NotFound = http.FileServer(http.Dir("../client"))
-	return create(addr, router), nil
+	handler := cors.Default().Handler(router)
+	return create(addr, handler), nil
 }
 
 func anagramFinder(anagrams map[string][]string) func(http.ResponseWriter, *http.Request, httprouter.Params) {
@@ -52,8 +54,6 @@ func httpOut(w http.ResponseWriter, message string, err error) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Add("Access-Control-Allow-Origin", "*")
-	w.Header().Add("Content-Type", "application/json")
 	fmt.Fprintf(w, message)
 }
 

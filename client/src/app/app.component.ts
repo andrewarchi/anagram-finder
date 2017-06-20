@@ -18,7 +18,8 @@ export class AppComponent {
   }
   set letters(letters: string) {
     this.http.get('http://localhost:3141/anagrams/' + letters)
-      .subscribe(res => this.anagrams = res.json());
+      .subscribe(res => this.anagrams = res.json(),
+        error => this.anagrams = [])
     this._letters = letters;
   }
 }
